@@ -1,0 +1,11 @@
+{
+  "PVC03": { "dailyKm": 800, "dailyTon": 4.5 },
+  "PVC04": { "dailyKm": 800, "dailyTon": 4.5 },
+  "PVC05": { "dailyKm": 800, "dailyTon": 4.5 },
+  "PVC06": { "dailyKm": 800, "dailyTon": 4.5 },
+  "PVC07": { "dailyKm": 1200, "dailyTon": 5 },
+  "PVC08": { "dailyKm": 1200, "dailyTon": 5 },
+  "XLPE1": { "dailyKm": 500, "dailyTon": 5 },
+  "XLPE2": { "dailyKm": 500, "dailyTon": 5 },
+  "XLPE8": { "dailyKm": 500, "dailyTon": 5 }
+}

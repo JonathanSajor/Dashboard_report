@@ -1,0 +1,22 @@
+{
+  "name": "dashboard-produccion-maquinas",
+  "version": "1.2.1",
+  "private": true,
+  "description": "Dashboard de producción por máquina, turno y métricas KM/TON",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "db:test": "node scripts/test-db.js",
+    "reports:test": "node --test scripts/test-shift-windows.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "exceljs": "^4.4.0",
+    "express": "^4.21.2",
+    "mssql": "^11.0.1"
+  }
+}

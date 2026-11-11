@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <!-- Define codificación, adaptación móvil, color del navegador y recursos del dashboard. -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#173f78">
+  <title>Dashboard de Producción</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <!-- Contenedor principal que mantiene alineadas todas las secciones de la página. -->
+  <main class="page-shell">
+    <!-- Título e introducción del reporte. -->
+    <header class="page-header">
+      <div class="eyebrow">DURANGO PLANTA 3 · PRODUCCIÓN</div>
+      <h1>Dashboard de Producción</h1>
+      <p class="subtitle">Indicadores de producción por máquina (KM y TON)</p>
+    </header>
+
+    <!-- Filtros para elegir fechas, máquinas y actualización automática. -->
+    <section class="filters card" aria-label="Filtros del reporte">
+      <div class="filter-grid">
+        <!-- Fecha de inicio del ciclo productivo, que comienza a las 07:00. -->
+        <div class="field">
+          <label for="fecha-inicial">Fecha inicial <span class="required">*</span></label>
+          <input id="fecha-inicial" type="date" required>
+          <small>Inicio del ciclo a las 07:00 h</small>
+        </div>
+        <!-- Fecha de corte exclusiva; el ciclo termina antes de las 07:00 de este día. -->
+        <div class="field">
+          <label for="fecha-final">Fecha final <span class="required">*</span></label>
+          <input id="fecha-final" type="date" required>
+          <small>Corte a las 06:59 h de esta fecha</small>
+        </div>
+        <!-- Selector desplegable de máquinas generado dinámicamente desde la API. -->
+        <div class="field machine-field">
+          <label>Máquinas</label>
+          <details class="machine-picker" id="machine-picker">
+            <summary id="machine-summary">Cargando máquinas…</summary>
+            <div class="machine-menu" id="machine-menu" aria-label="Selecciona las máquinas">
+              <div class="menu-actions">
+                <button type="button" class="link-button" id="select-all-machines">Seleccionar todas</button>
+                <button type="button" class="link-button" id="clear-all-machines">Limpiar</button>
+              </div>
+              <div id="machine-options" class="machine-options"></div>
+            </div>
+          </details>
+          <small id="selected-summary">Cargando lista de máquinas…</small>
+        </div>
+        <!-- Preferencia para permitir consultas periódicas sin pulsar Buscar. -->
+        <div class="field auto-field">
+          <label for="auto-refresh">Actualizar automáticamente</label>
+          <label class="switch-line" for="auto-refresh">
+            <input id="auto-refresh" type="checkbox" checked>
+            <span>Activado</span>
+          </label>
+        </div>
+      </div>
+      <!-- Acción manual para solicitar de nuevo el reporte. -->
+      <div class="filter-actions">
+        <button type="button" id="search-button" class="btn btn-primary"><span class="button-icon">⌕</span> Buscar</button>
+      </div>
+      <!-- Aclara el periodo que representa un día y que el resumen combina tres turnos. -->
+      <div class="filter-note"><span class="info-dot">i</span> Día productivo: 07:00 a 06:59 del día siguiente. El resumen diario incluye los tres turnos.</div>
+    </section>
+
+    <!-- Muestra el turno vigente y el estado de conexión o carga del reporte. -->
+    <section class="summary-heading">
+      <div>
+        <h2>Indicadores clave de producción (KM y TON)</h2>
+      </div>
+      <div class="heading-status">
+        <div id="current-shift" class="status-pill shift-pill">Turno actual: —</div>
+        <div id="report-status" class="status-pill" role="status"><span class="status-dot"></span> Preparando reporte</div>
+      </div>
+    </section>
+
+    <!-- La tabla se construye en JavaScript con columnas variables por máquina. -->
+    <section class="table-card card" aria-label="Indicadores de producción por máquina">
+      <div class="table-topline">
+        <span id="period-label">Periodo no consultado</span>
+        <span id="row-count">0 máquinas seleccionadas</span>
+      </div>
+      <div class="table-wrap">
+        <table id="summary-table">
+          <thead id="summary-head">
+            <tr>
+              <th rowspan="2">Indicador</th>
+              <th rowspan="2">Unidad</th>
+            </tr>
+            <tr></tr>
+          </thead>
+          <tbody id="summary-body">
+            <tr><td colspan="2" class="empty-state">Selecciona las fechas y las máquinas, luego pulsa Buscar.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Información de actualización y contenedor para mensajes temporales. -->
+    <footer class="page-footer">
+      <span id="last-updated">Última actualización: —</span>
+    </footer>
+    <div id="toast" class="toast" role="alert" hidden></div>
+  </main>
+</body>
+</html>
