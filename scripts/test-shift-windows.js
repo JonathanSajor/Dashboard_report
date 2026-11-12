@@ -61,10 +61,10 @@ test('crea el Excel con hojas de turno y producción diaria', async () => {
   const rows = [{
     id: 'PVC03',
     name: 'PVC03',
-    shiftKm: 125.5,
-    shiftTon: 1.25,
-    dailyKm: 125.5,
-    dailyTon: 1.25,
+    shiftKm: 282.91800147295,
+    shiftTon: 2.41413930656868,
+    dailyKm: 282.91800147295,
+    dailyTon: 2.41413930656868,
     shiftRows: 4,
     dailyRows: 4,
   }];
@@ -75,8 +75,14 @@ test('crea el Excel con hojas de turno y producción diaria', async () => {
     await workbook.xlsx.readFile(outputPath);
 
     assert.deepEqual(workbook.worksheets.map((sheet) => sheet.name), ['Turno A', 'Acumulado diario']);
-    assert.equal(workbook.getWorksheet('Turno A').getRow(6).getCell(3).value, 125.5);
-    assert.equal(workbook.getWorksheet('Acumulado diario').getRow(6).getCell(4).value, 1.25);
+    const shiftSheet = workbook.getWorksheet('Turno A');
+    const dailySheet = workbook.getWorksheet('Acumulado diario');
+    assert.equal(shiftSheet.getRow(6).getCell(3).value, 282.91800147295);
+    assert.equal(shiftSheet.getRow(6).getCell(4).value, 2.41413930656868);
+    assert.equal(dailySheet.getRow(6).getCell(3).value, 282.91800147295);
+    assert.equal(dailySheet.getRow(6).getCell(4).value, 2.41413930656868);
+    assert.equal(shiftSheet.getRow(6).getCell(3).numFmt, '#,##0.##############');
+    assert.equal(shiftSheet.getRow(6).getCell(4).numFmt, '#,##0.##############');
   } finally {
     await fs.rm(directory, { recursive: true, force: true });
   }

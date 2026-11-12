@@ -120,8 +120,17 @@ app.get('/api/reportes', async (req, res) => {
 app.get('*', (_req, res) => res.sendFile(path.join(publicDir, 'index.html')));
 
 // Inicia Express y deja visibles la dirección local y la fuente de datos seleccionada.
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Reporte de Producción disponible en http://localhost:${port}`);
   console.log(`Modo: ${isDemoMode() ? 'DEMO (datos ficticios)' : 'SQL Server'}`);
   startProductionReportScheduler();
+});
+
+server.on('error', (error) => {
+  if (error.code === 'EADDRINUSE') {
+    console.error(`[servidor] El puerto ${port} ya está en uso. Cierra el proceso que lo ocupa o configura otro puerto con PORT en .env.`);
+  } else {
+    console.error('[servidor] No fue posible iniciar el servidor:', error);
+  }
+  process.exitCode = 1;
 });

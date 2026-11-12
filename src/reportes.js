@@ -1,4 +1,11 @@
-const { columns, quoteIdentifier, quoteTableName, databaseIsConfigured, isDemoMode } = require('./config');
+const {
+  PRODUCTION_DECIMAL_TYPE,
+  columns,
+  quoteIdentifier,
+  quoteTableName,
+  databaseIsConfigured,
+  isDemoMode,
+} = require('./config');
 const { sql, getPool } = require('./database');
 const machineTargets = require('../config/machine-targets.json');
 
@@ -213,8 +220,8 @@ async function getProductionReport({ inicio, fin, turno, maquinas, machineNamesB
     Produccion AS (
       SELECT
         LTRIM(RTRIM(CONVERT(nvarchar(100), p.${idCol}))) AS machineId,
-        TRY_CONVERT(decimal(18, 4), p.${kmCol}) AS km,
-        TRY_CONVERT(decimal(18, 4), p.${tonCol}) AS ton,
+        TRY_CONVERT(${PRODUCTION_DECIMAL_TYPE}, p.${kmCol}) AS km,
+        TRY_CONVERT(${PRODUCTION_DECIMAL_TYPE}, p.${tonCol}) AS ton,
         p.${dateCol} AS productionTimestamp,
         UPPER(LTRIM(RTRIM(CONVERT(nvarchar(10), p.${shiftCol})))) AS turno
       FROM ${productionTable} AS p

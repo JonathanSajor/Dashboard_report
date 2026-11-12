@@ -7,6 +7,8 @@ const SHIFTS = [
   { id: 'C', label: 'Turno C · 22:30–06:59' },
 ];
 
+const PRODUCTION_DECIMAL_TYPE = 'decimal(38, 15)';
+
 // Lee una variable de entorno, quitando espacios y tratando NONE/NULL como ausencia.
 function configuredValue(variable, fallback = null) {
   if (!Object.prototype.hasOwnProperty.call(process.env, variable)) return fallback;
@@ -64,6 +66,7 @@ function isDemoMode() {
 // Expone configuración y utilidades utilizadas por el servidor y la capa de datos.
 module.exports = {
   SHIFTS,
+  PRODUCTION_DECIMAL_TYPE,
   columns,
   quoteIdentifier,
   quoteTableName,

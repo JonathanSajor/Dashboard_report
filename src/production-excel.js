@@ -1,11 +1,18 @@
 const fs = require('fs/promises');
 const path = require('path');
 const ExcelJS = require('exceljs');
-const { columns, quoteIdentifier, quoteTableName, isDemoMode } = require('./config');
+const {
+  PRODUCTION_DECIMAL_TYPE,
+  columns,
+  quoteIdentifier,
+  quoteTableName,
+  isDemoMode,
+} = require('./config');
 const { sql, getPool } = require('./database');
 const { getMachineCodes } = require('./reportes');
 const { formatLocalDateTime } = require('./shift-windows');
 const machineTargets = require('../config/machine-targets.json');
+const productionNumberFormat = '#,##0.##############';
 
 function reportFileName(closure) {
   return `produccion_${closure.cycleDate}_turno-${closure.id}.xlsx`;
@@ -66,23 +73,23 @@ async function getShiftProduction(closure) {
         WHEN ${dateCol} >= CONVERT(datetime2, @shiftStart, 126)
           AND ${dateCol} < CONVERT(datetime2, @shiftEnd, 126)
           AND UPPER(LTRIM(RTRIM(CONVERT(nvarchar(10), ${shiftCol})))) = @shift
-        THEN COALESCE(TRY_CONVERT(decimal(18, 4), ${kmCol}), 0) ELSE 0
+        THEN COALESCE(TRY_CONVERT(${PRODUCTION_DECIMAL_TYPE}, ${kmCol}), 0) ELSE 0
       END) AS shiftKm,
       SUM(CASE
         WHEN ${dateCol} >= CONVERT(datetime2, @shiftStart, 126)
           AND ${dateCol} < CONVERT(datetime2, @shiftEnd, 126)
           AND UPPER(LTRIM(RTRIM(CONVERT(nvarchar(10), ${shiftCol})))) = @shift
-        THEN COALESCE(TRY_CONVERT(decimal(18, 4), ${tonCol}), 0) ELSE 0
+        THEN COALESCE(TRY_CONVERT(${PRODUCTION_DECIMAL_TYPE}, ${tonCol}), 0) ELSE 0
       END) AS shiftTon,
       SUM(CASE
         WHEN ${dateCol} >= CONVERT(datetime2, @dayStart, 126)
           AND ${dateCol} < CONVERT(datetime2, @shiftEnd, 126)
-        THEN COALESCE(TRY_CONVERT(decimal(18, 4), ${kmCol}), 0) ELSE 0
+        THEN COALESCE(TRY_CONVERT(${PRODUCTION_DECIMAL_TYPE}, ${kmCol}), 0) ELSE 0
       END) AS dailyKm,
       SUM(CASE
         WHEN ${dateCol} >= CONVERT(datetime2, @dayStart, 126)
           AND ${dateCol} < CONVERT(datetime2, @shiftEnd, 126)
-        THEN COALESCE(TRY_CONVERT(decimal(18, 4), ${tonCol}), 0) ELSE 0
+        THEN COALESCE(TRY_CONVERT(${PRODUCTION_DECIMAL_TYPE}, ${tonCol}), 0) ELSE 0
       END) AS dailyTon,
       SUM(CASE
         WHEN ${dateCol} >= CONVERT(datetime2, @shiftStart, 126)
@@ -162,8 +169,8 @@ function addProductionSheet(workbook, name, title, closure, rows, kmKey, tonKey,
   });
   totalRow.font = { bold: true };
   for (const row of sheet.getRows(6, rows.length + 1) || []) {
-    row.getCell(3).numFmt = '#,##0.00';
-    row.getCell(4).numFmt = '#,##0.00';
+    row.getCell(3).numFmt = productionNumberFormat;
+    row.getCell(4).numFmt = productionNumberFormat;
   }
   return sheet;
 }
